@@ -151,7 +151,7 @@ if __name__ == "__main__":
     for det in facedets:
         shape = md_face(img,det)
         p2d = np.asarray([(shape.part(n).x, shape.part(n).y,) for n in range(shape.num_parts)], np.float32)
-    st = time.time()
-    rawfront, symfront = fronter.frontalization(img,det,p2d)
-    print "eplased time:", time.time() - st 
-    sm.toimage(np.round(symfront).astype(np.uint8)).show()
+        st = time.time()
+        rawfront, symfront = fronter.frontalization(img,det,p2d)
+        print "eplased time:", time.time() - st 
+        sm.toimage(np.round(symfront).astype(np.uint8)).show()
