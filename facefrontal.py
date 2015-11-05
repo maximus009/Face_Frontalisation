@@ -1,15 +1,3 @@
-'''
-This is the python code as a re-implementation of the matlab code from:
-http://www.openu.ac.il/home/hassner/projects/frontalize/
-Tal Hassner, et al. Effective Face Frontalization in Unconstrained Images,
-IEEE Conf. on Computer Vision and Pattern Recognition (CVPR), Boston, June 2015
-In order to make the code run you need:
-1. compile the dlib python code: http://dlib.net/
-2. download the shape_predictor_68_face_landmarks.dat file from:
-http://sourceforge.net/projects/dclib/files/dlib/v18.10/shape_predictor_68_face_landmarks.dat.bz2
-3. install python dependencies
-'''
-
 import scipy.misc as sm
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,11 +10,13 @@ import copy
 import sys
 
 def plot3d(p3ds):
+    #global ctr
     from mpl_toolkits.mplot3d import Axes3D
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(p3ds[:,0],p3ds[:,1], p3ds[:,2])
-    print "haha"
+    #plt.savefig('plot_'+str(ctr)+'.png',bbox_inches = 'tight')
+    #ctr+=1
     plt.show()
 
 
@@ -76,7 +66,7 @@ class frontalizer():
        
         tem3d = np.reshape(self.refU,(-1,3),order='F')
         bgids = tem3d[:,1] < 0# excluding background 3d points 
-        # plot3d(tem3d)
+        #plot3d(tem3d)
         ref3dface = np.insert(tem3d, 3, np.ones(len(tem3d)),axis=1).T
         #print tem3d.shape 
         ProjM = self.get_headpose(p2d)[2]
@@ -94,7 +84,12 @@ class frontalizer():
         sp_  = self.refU.shape[0:2]
         synth_front = np.zeros(sp_,np.float)
         inds = np.ravel_multi_index(np.round(proj2d_valid).astype(int),(img.shape[1], img.shape[0]),order = 'F')
-        unqeles, unqinds, inverids, conts  = np.unique(inds,return_index=True,return_inverse=True, return_counts=True)
+        
+
+        #unqeles, unqinds, inverids, conts  = np.unique(inds,return_index=True,return_inverse=True, return_counts=True)
+        unqeles, unqinds, inverids = np.unique(inds, return_index=True, return_inverse=True)
+        freq = np.bincount(inverids)
+        conts = np.array([unqeles, freq]).T
         tmp_ = synth_front.flatten()
         tmp_[vlids] = conts[inverids].astype(np.float)
         synth_front = tmp_.reshape(synth_front.shape,order='F')
@@ -135,8 +130,9 @@ class frontalizer():
         print facebb
         return rawfrontal, frontal_sym, img
 
-
 if __name__ == "__main__":
+
+    #ctr = 0
     ##to make sure you have dlib 
     PATH_face_model = 'face_shape.dat'
     md_face = dlib.shape_predictor(PATH_face_model)
@@ -147,12 +143,24 @@ if __name__ == "__main__":
     img = plt.imread(img_name)
     facedets = face_det(img,1)
     k = 1
+    
     for det in facedets:
         shape = md_face(img,det)
         p2d = np.asarray([(shape.part(n).x, shape.part(n).y,) for n in range(shape.num_parts)], np.float32)
         st = time.time()
+        (xr,yr),(xc, yc), (xl,yl) = p2d[0],p2d[33],p2d[16]
         rawfront, symfront, orig_face = fronter.frontalization(img,det,p2d)
+        
         orig_face = np.array(sm.toimage(np.round(orig_face).astype(np.uint8)))
+
+        if ((xc-xr)**2+(yc-yr)**2)>((xc-xl)**2+(yc-yl)**2):
+            #RIGHT
+            half = np.array(sm.toimage(np.round(symfront).astype(np.uint8)))[55:251,77:156]
+        else:
+            half = cv2.flip(np.array(sm.toimage(np.round(symfront).astype(np.uint8))),1)[55:251,77:156]
+
         print "eplased time:", time.time() - st 
         sm.imsave("all_results/"+img_name.split('.')[0].split('/')[-1]+"_"+str(k)+".jpg",np.hstack((cv2.resize(orig_face,(320,320)),np.array(sm.toimage(np.round(symfront).astype(np.uint8))))))
+        sm.imsave("just_front/"+img_name.split('.')[0].split('/')[-1]+"_"+str(k)+".jpg",np.array(sm.toimage(np.round(symfront).astype(np.uint8)))[55:251,77:234])
+        sm.imsave("just_half/"+img_name.split('.')[0].split('/')[-1]+"_"+str(k)+".jpg",half)
         k+=1
