@@ -1,6 +1,5 @@
 import scipy.misc as sm
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2
 import dlib
 import pickle as pkl
@@ -8,17 +7,6 @@ import time
 from scipy import ndimage
 import copy
 import sys
-
-def plot3d(p3ds):
-    #global ctr
-    from mpl_toolkits.mplot3d import Axes3D
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(p3ds[:,0],p3ds[:,1], p3ds[:,2])
-    #plt.savefig('plot_'+str(ctr)+'.png',bbox_inches = 'tight')
-    #ctr+=1
-    plt.show()
-
 
 class frontalizer():
     def __init__(self,refname):
@@ -148,11 +136,12 @@ if __name__ == "__main__":
         shape = md_face(img,det)
         p2d = np.asarray([(shape.part(n).x, shape.part(n).y,) for n in range(shape.num_parts)], np.float32)
         st = time.time()
+        # Location of the left tip, right tip and the tip of the nose.
         (xr,yr),(xc, yc), (xl,yl) = p2d[0],p2d[33],p2d[16]
         rawfront, symfront, orig_face = fronter.frontalization(img,det,p2d)
         
         orig_face = np.array(sm.toimage(np.round(orig_face).astype(np.uint8)))
-
+        #To check if face is turned left or right and crop only the visible half
         if ((xc-xr)**2+(yc-yr)**2)>((xc-xl)**2+(yc-yl)**2):
             #RIGHT
             half = np.array(sm.toimage(np.round(symfront).astype(np.uint8)))[55:251,77:156]
