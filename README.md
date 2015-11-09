@@ -6,7 +6,7 @@ Tal Hassner, Shai Harel*, Eran Paz* and Roee Enbar, Effective Face Frontalizatio
 
 To run the code:
 
-1. Compile the dlib python code: http://dlib.net/
+1. Compile the <a target='_blank' href="http://dlib.net/"> dlib for Python</a>.
 
 2. Download the 
 <a target='_blank' href = "http://sourceforge.net/projects/dclib/files/dlib/v18.10/shape_predictor_68_face_landmarks.dat.bz2">shape_predictor_68_face_landmarks.dat</a>
