@@ -1,7 +1,7 @@
 # Face Frontalisation
 
 Implementation of the following paper:
-"<a href="http://www.openu.ac.il/home/hassner/projects/frontalize/">Effective Face Frontalization in Unconstrained Images</a>".
+"<a target='_blank' href="http://www.openu.ac.il/home/hassner/projects/frontalize/">Effective Face Frontalization in Unconstrained Images</a>".
 Tal Hassner, Shai Harel*, Eran Paz* and Roee Enbar, Effective Face Frontalization in Unconstrained Images, IEEE Conf. on Computer Vision and Pattern Recognition (CVPR), Boston, June 2015
 
 To run the code:
