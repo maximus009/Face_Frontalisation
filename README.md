@@ -8,7 +8,7 @@ To run the code:
 
 1. Compile the dlib python code: http://dlib.net/
 
-2. Download the shape_predictor_68_face_landmarks.dat file from:
-http://sourceforge.net/projects/dclib/files/dlib/v18.10/shape_predictor_68_face_landmarks.dat.bz2
+2. Download the 
+<a target='_blank' href = "http://sourceforge.net/projects/dclib/files/dlib/v18.10/shape_predictor_68_face_landmarks.dat.bz2">shape_predictor_68_face_landmarks.dat</a>
 
 3. Install python dependencies 
